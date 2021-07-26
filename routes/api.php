@@ -21,7 +21,9 @@ use App\Http\Controllers\AuthController;
 Route::get('/test', function(){
 
     $user = App\Models\User::find(1);
-    $permission = $user->hasPermission('AppsUsersEdit');
+    //$permission = $user->hasPermission('AppsUsersEdit');
+
+    return  $user->groups()->get();
         
     if($permission)
     {
@@ -51,17 +53,22 @@ Route::get('/test', function(){
     // return App\Models\User::find(1)->groups()->first()->permissions;
 });
 
+Route::get('/users', function(){
+    return  App\Models\User::all()->load('groups');
+});
+
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
-Route::resource('firma', FirmaController::class);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
+
+    Route::get('/permissions', [AuthController::class, 'permissions']);
     Route::resource('icra', IcraController::class);
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    Route::group(['middleware' => ['permission:AppsUsersEditf']], function () {
-        Route::get('/permissions', [AuthController::class, 'permissions']);
+    Route::group(['middleware' => ['permission:AppsUsersEdit']], function () {
+        Route::resource('firma', FirmaController::class);
     });
 });
 

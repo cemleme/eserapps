@@ -67,6 +67,7 @@ class AuthController extends Controller
     }
 
     public function permissions(){
+        return auth()->user()->with('groups')->get();
         return auth()->user()->groups()->with('permissions')->get()->pluck('permissions.*.name')->collapse();
     }
 }
